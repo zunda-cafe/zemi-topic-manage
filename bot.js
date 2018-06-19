@@ -2,19 +2,17 @@ module.exports = function (context, req) {
     context.log('JavaScript HTTP trigger function processed a request.');
 
     // Botの準備
-    if (!process.env["slacktoken"]) {
+    if (!process.env["slacktoken"] || !process.env["GITHUB_TOKEN"]) {
        context.res = {
             status: 400,
-            body: "not set process.env.token"
+            body: "please set API token environment value."
         };
         context.done();
     }
-    //context.log(process.env["slacktoken"]);
     var Botkit = require('botkit');
-    // var os = require('os');
     var request = require('request');
     var controller = Botkit.slackbot({
-        debug: true,
+        debug: false,
     });
     var myquery =
         `{
@@ -38,7 +36,7 @@ module.exports = function (context, req) {
             }
         }  
     }`;
-    var mytoken = 'eb3ee624239f28e7f5bc24edc2d40574b7b990c0';
+    var githubToken = process.env["GITHUB_TOKEN"];
     var bot = controller.spawn({
         token: process.env["slacktoken"]
     }).startRTM((err, bot, payload) => {
@@ -47,7 +45,7 @@ module.exports = function (context, req) {
             var client = require('github-graphql-client');
             // githubに問い合わせ
             request = client({
-                token: mytoken,
+                token: githubToken,
                 query: myquery
             }, function (err, res) {
                 if (err) {
@@ -77,17 +75,5 @@ module.exports = function (context, req) {
             })
         });
     });
-    
-    if (req.query.name || (req.body && req.body.name)) {
-        context.res = {
-            // status: 200, /* Defaults to 200 */
-            body: "Hello " + (req.query.name || req.body.name)
-        };
-    } else {
-        context.res = {
-            status: 400,
-            body: "Please pass a name on the query string or in the request body"
-        };
-    }
     context.done();
 };
