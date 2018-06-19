@@ -63,6 +63,12 @@ module.exports = function (context, req) {
                         issue.reaction = resData[i].node.reactions.nodes.length;
                         issues.push(issue);
                     }
+
+                    function compareReaction(a,b){
+                        return b.reaction - a.reaction;
+                    }
+                    issues = issues.sort(compareReaction);
+
                     // チャットに返信
                     var result = ""
                     for (i = 0; i < issues.length; i++) {
@@ -70,7 +76,7 @@ module.exports = function (context, req) {
                             "detail: " + issues[i].url + "\n\n";
                         result += resultLine;
                     }
-                    bot.reply(message,{text:result,unfurl_links: false});
+                    bot.reply(message,{text:result,unfurl_links: false });
                 }
             })
         });
