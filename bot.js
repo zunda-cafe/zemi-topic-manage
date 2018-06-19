@@ -70,7 +70,7 @@ module.exports = function (context, req) {
                             "detail: " + issues[i].url + "\n\n";
                         result += resultLine;
                     }
-                    bot.reply(message,{text:result,unfurl_links: true});
+                    bot.reply(message,{text:result,unfurl_links: false});
                 }
             })
         });
